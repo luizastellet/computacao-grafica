@@ -27,16 +27,8 @@ int tipoPoligono;    // poligo por vertices ou por arestas
 int gIndVert = -1;   // numero de v�rtices do poligono definido
 int gNumVert = 0; 
 float gCen[3];       // centroido do poligono
-float gAng =0.0f;    // angulo para rotacao 
+float gAng = 0.0f;    // angulo para rotacao 
 float gMatriz[3][3];
-
-
-void circulo(float r, float ang, float pp[3])
-{
-	pp[0] = (float)(r * cos(ang));
-	pp[1] = (float)(r * sin(ang));
-	pp[2] = (float)0.0;
-}
 
 
 int clipVertex(int x, int y)
@@ -59,7 +51,7 @@ void init(void)
 	int i;
 	tipoPoligono = GL_POINTS;
 	jaPoligono = 0;
-	nVertices=0;   // zero pontos
+	nVertices=0;  
 	gNumVert = 0; 
 
 	for(i=0; i<MAXVERTEXS; i++)
@@ -80,7 +72,6 @@ static void Reshape(int width, int height)
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-//    gluPerspective(60.0, 1.0, 0.1, 1000.0);
     gluOrtho2D(-windW, windW, -windH, windH);
 
     glMatrixMode(GL_MODELVIEW);
@@ -99,11 +90,9 @@ void coord_line(void)
 {
     glLineWidth(1);
 
-	glColor3f(1.0, 0.0, 0.0);
-
 	// vertical line
-
 	glBegin(GL_LINE_STRIP);
+		glColor3f(1.0, 0.0, 0.0);
 		glVertex2f(-windW, 0);
 		glVertex2f(windW, 0);
     glEnd();
@@ -111,6 +100,7 @@ void coord_line(void)
 	// horizontal line 
 
     glBegin(GL_LINE_STRIP);
+		glColor3f(0.0, 0.0, 1.0);
 		glVertex2f(0, -windH);
 		glVertex2f(0, windH);
     glEnd();
@@ -196,14 +186,6 @@ void procegVertMenuEvents(int option)
 
 void subMenuEvents(int option) 
 {
-     //  option: 
-     //            1: transla��o
-     //            2: Rota��o
-     //            3: Scalamento
-     //            4: Cisalha
-	 //		       5: espelho
-	
-
 	gOpera = option;
 	glutPostRedisplay();
 }  
@@ -227,148 +209,16 @@ void createGLUTMenus()
 	glutAttachMenu(GLUT_RIGHT_BUTTON);		
 	
 }
-// void translate(float dx, float dy)
-// {
-//      int i;   
-//      for (i=0; i<MAXVERTEXS; i++) {
-// 		pvertex[i].v[0] += dx;
-// 		pvertex[i].v[1] += dy;
-// 	}  
-// }
 
-void calCentro(void)
-{
-     int i;
-    // computando o centroide
-     gCen[0] = gCen[1] = 0.0f;    
-     for (i=0; i<gNumVert; i++) {
-		gCen[0] += pvertex[i].v[0];
-		gCen[1] += pvertex[i].v[1];
-	 }
-     gCen[0] /= gNumVert;     
-     gCen[1] /= gNumVert;     
+void matrizIdentidade(void) {
+	gMatriz[0][0] = 1.0f;   gMatriz[0][1] = 0.0f;    gMatriz[0][2] = 0.0f;
+	gMatriz[1][0] = 0.0f;   gMatriz[1][1] = 1.0f;    gMatriz[1][2] = 0.0f;
+	gMatriz[2][0] = 0.0f;   gMatriz[2][1] = 0.0f;    gMatriz[2][2] = 1.0f;
 }
-
-void translaCentro(int t)
-{
-     int i;   
-     // translada para centro
-     for (i=0; i<gNumVert; i++) {
-		pvertex[i].v[0] += (t * gCen[0]);
-		pvertex[i].v[1] += (t * gCen[1]);
-	 }    
-}
-
-// void rotate(float dx, float dy)
-// {
-//      int i; 
-//      float oo, teta, xy[3]; 
-     
-//      // calculo do angulo 
-//      // seja vetor do centro para o vertice: vv 
-//      // dd = (dx, dy) é o vetor deslocalmento do mouse
-//      // o = vv x dd  (produto vetorial)
-//      // se o positivo ==> rota antihorario;  
-//      // se o negativo ==> rota horario
- 
-//      calCentro();
-//      translaCentro(-1);
-     
-//      // determinando o angulo
-//      oo = pvertex[gIndVert].v[1] * dx - pvertex[gIndVert].v[0] * dy;
-//      teta = oo;
-//      if(oo>0.0f){
-//         teta = -1.0f * oo; 
-// 	 }
-            
-//      // rota em teta para lado oo         
-//      for (i=0; i<MAXVERTEXS; i++) {
-// 		xy[0] = pvertex[i].v[0];
-// 		xy[1] = pvertex[i].v[1];
-// 		pvertex[i].v[0] = xy[0] * cos(teta) - xy[1] * sin(teta);
-// 		pvertex[i].v[1] = xy[0] * sin(teta) + xy[1] * cos(teta);		
-// 	 } 	 
-//      translaCentro(1);     
-// }
-
-// void scale(float dx, float dy)
-// {
-//      int i;
-//      float sx, sy;
-     
-//      calCentro();
-//      translaCentro(-1);   
-//      // scalando...
-     
-//      sx = sy = 1.0f;
-//      if(fabs(pvertex[gIndVert].v[0]) > 0.01f)
-//         sx = 1.0f + dx / pvertex[gIndVert].v[0];
-//      if(fabs(pvertex[gIndVert].v[1]) > 0.01f)
-//         sy = 1.0f + dy / pvertex[gIndVert].v[1];     
-//      for (i=0; i<MAXVERTEXS; i++) {
-// 		    pvertex[i].v[0] *= sx;		
-// 		    pvertex[i].v[1] *= sy;
-// 	 }
-              
-//      translaCentro(1);                     
-// }
-
-// void shear(float dx, float dy)
-// {
-//      int i;
-//      float sx, sy, xy[3];
-     
-//      sx = 0.001f*dx;
-//      sy = 0.001f*dy;
-//      if(dx>dy)
-//      {
-//          if(fabs(pvertex[gIndVert].v[0])>0.1f)
-//             sx =  dx / pvertex[gIndVert].v[0];
-//      }
-//      else
-//      {
-//          if(fabs(pvertex[gIndVert].v[1])>0.1f)
-//             sy =  dy / pvertex[gIndVert].v[1]; 
-//      }
-         
-//      calCentro();
-//      translaCentro(-1);          
-     
-//       // rota em teta para lado oo         
-//      for (i=0; i<MAXVERTEXS; i++) {
-// 		xy[0] = pvertex[i].v[0];
-// 		xy[1] = pvertex[i].v[1];
-// 		pvertex[i].v[0] = xy[0] + xy[1] * sx;
-// 		pvertex[i].v[1] = xy[0] * sy + xy[1];		
-// 	 } 	     
-         
-//      translaCentro(1);   
-// }
-
-// void reflection(int x, int y)
-// {
-//     int i;   
-// 	if(x < 0) {
-// 			for (i=0; i<MAXVERTEXS; i++) {
-// 				pvertex[i].v[0] *= -1;
-// 				pvertex[i].v[1] *= 1;
-// 			}
-// 	 }
-// 	if(y < 0) {
-// 			for (i=0; i<MAXVERTEXS; i++) {
-// 				pvertex[i].v[0] *= 1;
-// 				pvertex[i].v[1] *= -1;
-// 			}
-// 	 }
-// }
-
-// NOVAS TRANSFORMAÇÕES
-
 
 void calCentro(float cc[])
 {
      int i;
-    // computando o centroide
      cc[0] = cc[1] = cc[2] = 0.0f;    
      for (i=0; i<gNumVert; i++) {
 		cc[0] += pvertex[i].v[0];
@@ -381,17 +231,10 @@ void calCentro(float cc[])
 }
 
 
-void matrizIdentidade(void) {
-	gMatriz[0][0] = 1.0f;   gMatriz[0][1] = 0.0f;    gMatriz[0][2] = 0.0f;
-	gMatriz[1][0] = 0.0f;   gMatriz[1][1] = 1.0f;    gMatriz[1][2] = 0.0f;
-	gMatriz[2][0] = 0.0f;   gMatriz[2][1] = 0.0f;    gMatriz[2][2] = 1.0f;
-}
 
 void operaTransforma(int position) {
 	float temp[3];
 	int i, j;
-	  // temp = Matriz x vetor
-
 
 	printf("\n-------------------------------\n");
 	for(i=0; i<3; i++) {
@@ -404,10 +247,8 @@ void operaTransforma(int position) {
 	 		printf("\n\n");
 		}
 	}
-	  // copia vetor resultando no vetor original
 
-	for(i=0; i<3; i++){
-		printf("%f, ", temp[i]);
+	for( i = 0; i < 3; i++){
 		pvertex[position].v[i] = temp[i];
 	}	
 	printf("\n-------------------------------\n");
@@ -415,134 +256,98 @@ void operaTransforma(int position) {
 
 
 void translate(float dx, float dy)
-{
-	int i;
-    matrizIdentidade();    // gera a matriz de identidade gMatriz
+{	
+	matrizIdentidade();  
      
-     	// preenche matriz translacao:  [ 1  0  dx |  0  1  dy |  0  0  1 ] 
     gMatriz[0][2] = dx;
     gMatriz[1][2] = dy;
     
-    	// opera transformação de cada vetor vértice
-	for (i=0; i<gNumVert; i++) {
-		printf("\n\n vetor %d: (%f, %f)", i, pvertex[i].v[0], pvertex[i].v[1]);
+	for (int i = 0; i < gNumVert; i++) {
 		operaTransforma(i);
 	}
 }
 
 void rotate(float dx, float dy)
 {
-     int i; 
-     float oo, teta, vc[3]; 
-     
-     // calculo do angulo 
-     // ----------------------------------------------
-     // seja vetor do centro para o vertice: vv 
-     // dd = (dx, dy) é o vetor deslocalmento do mouse
-     // oo = vv x dd  (produto vetorial)
-     // se oo positivo ==> rota antihorario;  
-     // se oo negativo ==> rota horario
-     // ----------------------------------------------
+    int i; 
+    float oo, teta, vc[3]; 
  
-     calCentro(vc);                    // calculo vetor vc ao centro geométric do polígono
-     translate(-1*vc[0], -1*vc[1]);    // translada o polígo ao origem em -vc
-     
-     // determinando o angulo: 
-     
-	    // produto vetorial --> (v[0], v[1]) x (dx, dy)  
-     oo = pvertex[gIndVert].v[1] * dx - pvertex[gIndVert].v[0] * dy;
-     
-     	// oo é esacalar positivo (horaria) ou negativo (anti-horaria)
-
-     teta = gAng;                // angulo constante definido no init
-     if(oo>0.0f) {
+    calCentro(vc);            
+    translate(-1*vc[0], -1*vc[1]);    
+    
+    oo = pvertex[gIndVert].v[1] * dx - pvertex[gIndVert].v[0] * dy;
+    teta = gAng;                
+    if(oo > 0.0f) {
         teta = -1.0f * gAng; 		 
-	 }
+	}
 
-	// printf("oo: %f \ngAng: %f \nteta: %f", oo, gAng, teta);
-	// 	// Define a matriz de Rotacao	 
- 	 matrizIdentidade();  
- 	 gMatriz[0][0] = cos(teta);    gMatriz[0][1] = -sin(teta);
- 	 gMatriz[1][0] = sin(teta);    gMatriz[1][1] = cos(teta);
+ 	matrizIdentidade();  
+ 	
+	gMatriz[0][0] = cos(teta);    
+	gMatriz[0][1] = -sin(teta);
+ 	gMatriz[1][0] = sin(teta);
+	gMatriz[1][1] = cos(teta);
  	 
-    // 	// opera transformação Rotacao de cada vetor vértice
-	 for (i=0; i<gNumVert; i++){
+    for (i=0; i<gNumVert; i++){
 			operaTransforma(i);
-	 }
+	}
  	 
-     translate(vc[0], vc[1]);     // o poligo é tranladado para sua posicao original
+    translate(vc[0], vc[1]);  
 }
 
-// -------- verifica se um ponto (x, y) posia se considerar um vértice do polígono
-// ---------------------------------------------------------------------------------
-
 void scale(float dx, float dy){
-	int i; 
-    float oo, teta, vc[3], Sx, Sy; 
-     
-     // calculo do angulo 
-     // ----------------------------------------------
-     // seja vetor do centro para o vertice: vv 
-     // dd = (dx, dy) é o vetor deslocalmento do mouse
-     // oo = vv x dd  (produto vetorial)
-     // se oo positivo ==> rota antihorario;  
-     // se oo negativo ==> rota horario
-     // ----------------------------------------------
- 
-     calCentro(vc);                    // calculo vetor vc ao centro geométric do polígono
-     translate(-1*vc[0], -1*vc[1]);    // translada o polígo ao origem em -vc
-     
-     // determinando o angulo: 
-     
-	    // produto vetorial --> (v[0], v[1]) x (dx, dy)  
-    Sx = Sy = 1.0f;
-     if(fabs(pvertex[gIndVert].v[0]) > 0.01f)
-        Sx = 1.0f + dx / pvertex[gIndVert].v[0];
-     if(fabs(pvertex[gIndVert].v[1]) > 0.01f)
-        Sy = 1.0f + dy / pvertex[gIndVert].v[1];
-     for (i=0; i<gNumVert; i++) {
-            pvertex[i].v[0] *= Sx;
-            pvertex[i].v[1] *= Sy;
-     }
 
- 	 matrizIdentidade();  
- 	 gMatriz[0][0] = Sx;
- 	 gMatriz[1][1] = Sy;
+	int i; 
+    float vc[3], Sx, Sy; 
+    
+    calCentro(vc);   
+    translate(-1*vc[0], -1*vc[1]);    
+     
+
+    Sx = Sy = 1.0f;
+    if(fabs(pvertex[gIndVert].v[0]) > 0.01f){
+		Sx = 1.0f + dx / pvertex[gIndVert].v[0];
+	}
+		
+    if(fabs(pvertex[gIndVert].v[1]) > 0.01f){
+		Sy = 1.0f + dy / pvertex[gIndVert].v[1];
+	}
+ 
+ 	matrizIdentidade();  
+ 	gMatriz[0][0] = Sx;
+ 	gMatriz[1][1] = Sy;
  	 
-    // 	// opera transformação Rotacao de cada vetor vértice
-	 for (i=0; i<gNumVert; i++){
-			operaTransforma(i);
-	 }
+	for (i=0; i<gNumVert; i++){
+		operaTransforma(i);
+	}
  	 
-     translate(vc[0], vc[1]); 
+    translate(vc[0], vc[1]); 
 }
 
 
 void shear(float dx, float dy)
 {
-     int i;
-     float sx, sy, vc[3];
+    int i;
+    float Sx, Sy, vc[3];
      
 
-	 calCentro(vc);                    // calculo vetor vc ao centro geométric do polígono
-     translate(-1*vc[0], -1*vc[1]);
+	calCentro(vc);           
+    translate(-1*vc[0], -1*vc[1]);
 
-     sx = 0.001f*dx;
-     sy = 0.001f*dy;
-     if(dx>dy)
-     {
-         if(fabs(pvertex[gIndVert].v[0])>0.1f)
-            sx =  dx / pvertex[gIndVert].v[0];
-     }
-     else
-     {
-         if(fabs(pvertex[gIndVert].v[1])>0.1f)
-            sy =  dy / pvertex[gIndVert].v[1]; 
-     }
+    Sx = 0.001f*dx;
+    Sy = 0.001f*dy;
+    if(dx > dy){
+        if(fabs(pvertex[gIndVert].v[0])>0.1f)
+            Sx = 1.0f + dx / pvertex[gIndVert].v[0];
+
+    } else {
+        if(fabs(pvertex[gIndVert].v[1])>0.1f)
+ 	       Sy = 1.0f +  dy / pvertex[gIndVert].v[1]; 
+    }
 
 	matrizIdentidade();
-	gMatriz[0][1] = sx; 
-	gMatriz[1][0] = sy;      
+	gMatriz[0][1] = Sx; 
+	gMatriz[1][0] = Sy;      
    
    	 for (i=0; i<gNumVert; i++){
 			operaTransforma(i);
@@ -554,16 +359,13 @@ void shear(float dx, float dy)
 void reflect(float dx, float dy){
   	int i;
     
-	// FAZENDO PARA X
-
-
 	matrizIdentidade();
 
-	if(dx > 151 || dx < -151){
+	if(fabs(dx) > fabs(dy)){
 		gMatriz[0][0] = -1;
 		gMatriz[1][1] = 1;       
 	}
-	if(dy > 151 || dy < -151){
+	if(fabs(dy) > fabs(dx)){
 		gMatriz[0][0] = 1;
 		gMatriz[1][1] = -1;       
 	}
@@ -609,11 +411,7 @@ void mouse(int button, int state, int x, int y)
 				x = x - windW; 
 				y = windH - y;
 
-//				glColor3f(0.0, 1.0, 0.0);
 				glPointSize(3);
-//				glBegin(GL_POINTS); 
-//				glVertex2i(x, y);
-//				glEnd();
 
 				pvertex[gNumVert].v[0] = (float)x;
 				pvertex[gNumVert].v[1] = (float)y;

@@ -338,11 +338,12 @@ void shear(float dx, float dy)
     Sy = 0.001f*dy;
     if(dx > dy){
         if(fabs(pvertex[gIndVert].v[0])>0.1f)
-            Sx = 1.0f + dx / pvertex[gIndVert].v[0];
+            Sx =  dx / pvertex[gIndVert].v[0];
 
-    } else {
+    } 
+	if(dy > dx){
         if(fabs(pvertex[gIndVert].v[1])>0.1f)
- 	       Sy = 1.0f +  dy / pvertex[gIndVert].v[1]; 
+ 	       Sy =  dy / pvertex[gIndVert].v[1]; 
     }
 
 	matrizIdentidade();
@@ -357,8 +358,12 @@ void shear(float dx, float dy)
 }
 
 void reflect(float dx, float dy){
+  
   	int i;
+	float vc[3];
     
+	calCentro(vc);           
+    translate(-1*vc[0], -1*vc[1]);
 	matrizIdentidade();
 
 	if(fabs(dx) > fabs(dy)){
@@ -370,9 +375,10 @@ void reflect(float dx, float dy){
 		gMatriz[1][1] = -1;       
 	}
    
-   	 for (i=0; i<gNumVert; i++){
-			operaTransforma(i);
-	 }
+   	for (i=0; i<gNumVert; i++){
+		operaTransforma(i);
+	}
+	translate(vc[0], vc[1]); 
 }
 
 

@@ -334,16 +334,16 @@ void shear(float dx, float dy)
 	calCentro(vc);           
     translate(-1*vc[0], -1*vc[1]);
 
-    Sx = 0.001f*dx;
-    Sy = 0.001f*dy;
+    Sx = 0;
+    Sy = 0;
     if(dx > dy){
         if(fabs(pvertex[gIndVert].v[0])>0.1f)
-            Sx =  dx / pvertex[gIndVert].v[0];
+            Sx = (dx / pvertex[gIndVert].v[1])/5;    
 
     } 
 	if(dy > dx){
         if(fabs(pvertex[gIndVert].v[1])>0.1f)
- 	       Sy =  dy / pvertex[gIndVert].v[1]; 
+ 	       Sy = (dy / pvertex[gIndVert].v[0])/5; 
     }
 
 	matrizIdentidade();
@@ -451,7 +451,7 @@ int main(int argc, char **argv)
     type |= (doubleBuffer) ? GLUT_DOUBLE : GLUT_SINGLE;
 
     glutInitDisplayMode(type);
-    glutInitWindowSize(600, 500);
+    glutInitWindowSize(1200, 800);
     glutCreateWindow("Basic Program Using Glut and Gl");
 
 	init();

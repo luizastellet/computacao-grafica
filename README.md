@@ -3,7 +3,7 @@
 ## Matriz Identidadde
 
 		| 1  0  0 |
-	M = | 0  1  0 |
+	    M = | 0  1  0 |
 		| 0  0  1 |
 
 ## Função operaTransforma()
@@ -63,7 +63,7 @@ Para trazer o polígono à origem, multiplicamos os valores do centróide por -1
 Assim, a matriz de translação ficará: 
 
 			| 1   0  -dx ||x|   |x - dx|
-		M = | 0   1  -dy ||y| = |y - dy|
+		    M = | 0   1  -dy ||y| = |y - dy|
 			| 0   0   1  ||1|   |  1   |
 
 Agora já é possível realizar a transformação deseja, como, por exemplo, a rotação. 
@@ -77,7 +77,7 @@ Transladar é movimentar um objeto. É possível realizar a translação de um o
 Entâo, a matriz de translação é dada por: 
 
 			| 1  0  dx ||x|   |x + dx|
-		M = | 0  1  dy ||y| = |y + dy|
+		    M = | 0  1  dy ||y| = |y + dy|
 			| 0  0  1  ||1|   |  1   |
 
 
@@ -104,7 +104,7 @@ Rotacionar significa girar, alterar a orientação de um objeto. Para que isso s
 A matriz de rotação é dada por: 
 
 			| cos(α)  -sin(α)   0 ||x|   |x.cos(α) - y.sin(α)|
-		M = | sin(α)   cos(α)   0 ||y| = |y.cos(α) + x.sin(α)|
+		    M = | sin(α)   cos(α)   0 ||y| = |y.cos(α) + x.sin(α)|
 			|   0        0      1 ||1|   |         1         |
 
 
@@ -154,7 +154,7 @@ A transformação de escala consiste da alteração do tamanho do modelo. Esta t
 A matriz de escala é dada por: 
 
 			| Sx  0   0 ||x|   |x.Sx|
-		M = | 0   Sy  0 ||y| = |y.Sy|
+		    M = | 0   Sy  0 ||y| = |y.Sy|
 			| 0   0   1 ||1|   | 1  |
 
 1. Calcular centro do objeto e transladá-lo à origem do sistema. 
